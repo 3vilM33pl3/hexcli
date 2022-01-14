@@ -37,7 +37,8 @@ var hexConnectCmd = &cobra.Command{
 		} else {
 			serverAddr = args[0]
 		}
-		c, err := NewClient(serverAddr)
+
+		c, err := NewClient(serverAddr, true)
 		if err != nil {
 			fmt.Printf("Unable to connect %s", err)
 		} else {
@@ -92,6 +93,7 @@ var hexStatusCmd = &cobra.Command{
 	Short: "status of hexagon network",
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Printf("Inside hex status command: %v\n", args)
+
 	},
 }
 
@@ -99,7 +101,14 @@ var hexStatusServerCmd = &cobra.Command{
 	Use:   "server",
 	Short: "status of hexagon server",
 	Run: func(cmd *cobra.Command, args []string) {
-		client, err := NewClient("localhost:8080")
+		serverAddr := "localhost:8080"
+		if len(args) > 0 {
+			serverAddr = args[0]
+		}
+
+		secure, _ := cmd.Flags().GetBool("secure")
+		client, err := NewClient(serverAddr, secure)
+
 		if err != nil {
 			fmt.Printf("Error connecting %s", err)
 			return
@@ -155,13 +164,5 @@ func init() {
 	hexStatusCmd.AddCommand(hexStatusStorageCmd)
 	hexStatusCmd.AddCommand(hexStatusClientCmd)
 
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// hexCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// hexCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	rootCmd.PersistentFlags().BoolP("secure", "s", true, "do a secure connection")
 }

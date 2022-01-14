@@ -15,4 +15,11 @@ Command line interface to manipulate game content
 ### Package content
     nb pack [dir]
 
-## Build
+## Run locally
+Run [`hexcloud`](https://github.com/3vilM33pl3/hexcloud) server. The server listens to 0.0.0.0:8080 by default.
+
+`go run .\cmd\hexcloud\hexcloud.go --local=true`
+
+Test with status command:
+
+`go run nb.go status server`
