@@ -12,6 +12,7 @@ import (
 	"google.golang.org/protobuf/types/known/emptypb"
 	"io/ioutil"
 	"runtime"
+	"time"
 )
 
 type Client struct {
@@ -31,9 +32,10 @@ func NewClient(serverAddr string, secure bool) (c *Client, err error) {
 }
 
 func (c *Client) Status() (message string, err error) {
-	//ctx, cancel := context.WithTimeout(context.Background(), time.Second)
-	//defer cancel()
-	status, err := c.grpcClient.GetStatus(context.TODO(), &emptypb.Empty{})
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	status, err := c.grpcClient.GetStatus(ctx, &emptypb.Empty{})
 	if err != nil {
 		return "", err
 	}
@@ -43,6 +45,7 @@ func (c *Client) Status() (message string, err error) {
 func (c *Client) Connect(serverAddr string) (err error) {
 	var opts []grpc.DialOption
 	var config *tls.Config
+	opts = append(opts, grpc.WithAuthority(serverAddr))
 
 	if c.secure {
 
