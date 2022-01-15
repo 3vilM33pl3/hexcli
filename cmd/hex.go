@@ -25,29 +25,6 @@ to quickly create a Cobra application.`,
 	},
 }
 
-var hexConnectCmd = &cobra.Command{
-	Use:   "connect [server]",
-	Short: "connect to hexcloud server with address [server]",
-	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Printf("Inside connect command: %v\n", args)
-		var serverAddr string
-		if len(args) == 0 {
-			fmt.Printf("Using default server localhost:8080\n")
-			serverAddr = "localhost:8080"
-		} else {
-			serverAddr = args[0]
-		}
-
-		c, err := NewClient(serverAddr, true)
-		if err != nil {
-			fmt.Printf("Unable to connect %s", err)
-		} else {
-			fmt.Printf("Connected %x", c)
-		}
-
-	},
-}
-
 var hexAddCmd = &cobra.Command{
 	Use:   "add [x,y,z] [content]",
 	Short: "add hexagon with coordinate [x,y,z] and compressed content file [content]",
@@ -150,7 +127,6 @@ var hexStatusClientCmd = &cobra.Command{
 }
 
 func init() {
-	rootCmd.AddCommand(hexConnectCmd)
 
 	rootCmd.AddCommand(hexCmd)
 	hexCmd.AddCommand(hexAddCmd)
