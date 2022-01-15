@@ -164,5 +164,6 @@ func init() {
 	hexStatusCmd.AddCommand(hexStatusStorageCmd)
 	hexStatusCmd.AddCommand(hexStatusClientCmd)
 
-	rootCmd.PersistentFlags().BoolP("secure", "s", true, "do a secure connection")
+	rootCmd.PersistentFlags().BoolP("secure", "s", true, "secure connection")
+
 }

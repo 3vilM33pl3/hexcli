@@ -12,18 +12,24 @@ import (
 	"google.golang.org/protobuf/types/known/emptypb"
 	"io/ioutil"
 	"runtime"
+	"strings"
 	"time"
 )
 
 type Client struct {
 	grpcClient hexcloud.HexagonServiceClient
-	secure bool
+	secure     bool
+	serverAddr string
 }
 
 func NewClient(serverAddr string, secure bool) (c *Client, err error) {
 	c = &Client{}
 	c.secure = secure
-	err = c.Connect(serverAddr)
+	c.serverAddr, err = c.addPortNumber(serverAddr)
+	if err != nil {
+		return c, err
+	}
+	err = c.Connect()
 	if err != nil {
 		fmt.Printf("%s", err)
 		return nil, err
@@ -42,13 +48,24 @@ func (c *Client) Status() (message string, err error) {
 	return status.Msg, nil
 }
 
-func (c *Client) Connect(serverAddr string) (err error) {
+func (c *Client) addPortNumber(serverAddr string) (string, error) {
+	if !strings.Contains(serverAddr, ":") {
+		if c.secure {
+			return serverAddr + ":" + "443", nil
+		} else {
+			return serverAddr + ":" + "80", nil
+		}
+	}
+
+	return serverAddr, nil
+}
+
+func (c *Client) Connect() (err error) {
 	var opts []grpc.DialOption
 	var config *tls.Config
-	opts = append(opts, grpc.WithAuthority(serverAddr))
+	opts = append(opts, grpc.WithAuthority(c.serverAddr))
 
 	if c.secure {
-
 		if runtime.GOOS == "windows" {
 			rootCert, _ := ioutil.ReadFile("ca.cert")
 			cp := x509.NewCertPool()
@@ -71,13 +88,12 @@ func (c *Client) Connect(serverAddr string) (err error) {
 		}
 
 		cred := credentials.NewTLS(config)
-
 		opts = append(opts, grpc.WithTransportCredentials(cred))
 	} else {
 		opts = append(opts, grpc.WithInsecure())
 	}
 
-	conn, err := grpc.Dial(serverAddr, opts...)
+	conn, err := grpc.Dial(c.serverAddr, opts...)
 	if err != nil {
 		return fmt.Errorf("Unable to connect: %s", err)
 	}
@@ -86,26 +102,25 @@ func (c *Client) Connect(serverAddr string) (err error) {
 	return nil
 }
 
-var rootCert string =
-"-----BEGIN CERTIFICATE-----\n"+
-"MIIDujCCAqKgAwIBAgILBAAAAAABD4Ym5g0wDQYJKoZIhvcNAQEFBQAwTDEgMB4G\n"+
-"A1UECxMXR2xvYmFsU2lnbiBSb290IENBIC0gUjIxEzARBgNVBAoTCkdsb2JhbFNp\n"+
-"Z24xEzARBgNVBAMTCkdsb2JhbFNpZ24wHhcNMDYxMjE1MDgwMDAwWhcNMjExMjE1\n"+
-"MDgwMDAwWjBMMSAwHgYDVQQLExdHbG9iYWxTaWduIFJvb3QgQ0EgLSBSMjETMBEG\n"+
-"A1UEChMKR2xvYmFsU2lnbjETMBEGA1UEAxMKR2xvYmFsU2lnbjCCASIwDQYJKoZI\n"+
-"hvcNAQEBBQADggEPADCCAQoCggEBAKbPJA6+Lm8omUVCxKs+IVSbC9N/hHD6ErPL\n"+
-"v4dfxn+G07IwXNb9rfF73OX4YJYJkhD10FPe+3t+c4isUoh7SqbKSaZeqKeMWhG8\n"+
-"eoLrvozps6yWJQeXSpkqBy+0Hne/ig+1AnwblrjFuTosvNYSuetZfeLQBoZfXklq\n"+
-"tTleiDTsvHgMCJiEbKjNS7SgfQx5TfC4LcshytVsW33hoCmEofnTlEnLJGKRILzd\n"+
-"C9XZzPnqJworc5HGnRusyMvo4KD0L5CLTfuwNhv2GXqF4G3yYROIXJ/gkwpRl4pa\n"+
-"zq+r1feqCapgvdzZX99yqWATXgAByUr6P6TqBwMhAo6CygPCm48CAwEAAaOBnDCB\n"+
-"mTAOBgNVHQ8BAf8EBAMCAQYwDwYDVR0TAQH/BAUwAwEB/zAdBgNVHQ4EFgQUm+IH\n"+
-"V2ccHsBqBt5ZtJot39wZhi4wNgYDVR0fBC8wLTAroCmgJ4YlaHR0cDovL2NybC5n\n"+
-"bG9iYWxzaWduLm5ldC9yb290LXIyLmNybDAfBgNVHSMEGDAWgBSb4gdXZxwewGoG\n"+
-"3lm0mi3f3BmGLjANBgkqhkiG9w0BAQUFAAOCAQEAmYFThxxol4aR7OBKuEQLq4Gs\n"+
-"J0/WwbgcQ3izDJr86iw8bmEbTUsp9Z8FHSbBuOmDAGJFtqkIk7mpM0sYmsL4h4hO\n"+
-"291xNBrBVNpGP+DTKqttVCL1OmLNIG+6KYnX3ZHu01yiPqFbQfXf5WRDLenVOavS\n"+
-"ot+3i9DAgBkcRcAtjOj4LaR0VknFBbVPFd5uRHg5h6h+u/N5GJG79G+dwfCMNYxd\n"+
-"AfvDbbnvRG15RjF+Cv6pgsH/76tuIMRQyV+dTZsXjAzlAcmgQWpzU/qlULRuJQ/7\n"+
-"TBj0/VLZjmmx6BEP3ojY+x1J96relc8geMJgEtslQIxq/H5COEBkEveegeGTLg==\n"+
-"-----END CERTIFICATE-----\n"
+var rootCert string = "-----BEGIN CERTIFICATE-----\n" +
+	"MIIDujCCAqKgAwIBAgILBAAAAAABD4Ym5g0wDQYJKoZIhvcNAQEFBQAwTDEgMB4G\n" +
+	"A1UECxMXR2xvYmFsU2lnbiBSb290IENBIC0gUjIxEzARBgNVBAoTCkdsb2JhbFNp\n" +
+	"Z24xEzARBgNVBAMTCkdsb2JhbFNpZ24wHhcNMDYxMjE1MDgwMDAwWhcNMjExMjE1\n" +
+	"MDgwMDAwWjBMMSAwHgYDVQQLExdHbG9iYWxTaWduIFJvb3QgQ0EgLSBSMjETMBEG\n" +
+	"A1UEChMKR2xvYmFsU2lnbjETMBEGA1UEAxMKR2xvYmFsU2lnbjCCASIwDQYJKoZI\n" +
+	"hvcNAQEBBQADggEPADCCAQoCggEBAKbPJA6+Lm8omUVCxKs+IVSbC9N/hHD6ErPL\n" +
+	"v4dfxn+G07IwXNb9rfF73OX4YJYJkhD10FPe+3t+c4isUoh7SqbKSaZeqKeMWhG8\n" +
+	"eoLrvozps6yWJQeXSpkqBy+0Hne/ig+1AnwblrjFuTosvNYSuetZfeLQBoZfXklq\n" +
+	"tTleiDTsvHgMCJiEbKjNS7SgfQx5TfC4LcshytVsW33hoCmEofnTlEnLJGKRILzd\n" +
+	"C9XZzPnqJworc5HGnRusyMvo4KD0L5CLTfuwNhv2GXqF4G3yYROIXJ/gkwpRl4pa\n" +
+	"zq+r1feqCapgvdzZX99yqWATXgAByUr6P6TqBwMhAo6CygPCm48CAwEAAaOBnDCB\n" +
+	"mTAOBgNVHQ8BAf8EBAMCAQYwDwYDVR0TAQH/BAUwAwEB/zAdBgNVHQ4EFgQUm+IH\n" +
+	"V2ccHsBqBt5ZtJot39wZhi4wNgYDVR0fBC8wLTAroCmgJ4YlaHR0cDovL2NybC5n\n" +
+	"bG9iYWxzaWduLm5ldC9yb290LXIyLmNybDAfBgNVHSMEGDAWgBSb4gdXZxwewGoG\n" +
+	"3lm0mi3f3BmGLjANBgkqhkiG9w0BAQUFAAOCAQEAmYFThxxol4aR7OBKuEQLq4Gs\n" +
+	"J0/WwbgcQ3izDJr86iw8bmEbTUsp9Z8FHSbBuOmDAGJFtqkIk7mpM0sYmsL4h4hO\n" +
+	"291xNBrBVNpGP+DTKqttVCL1OmLNIG+6KYnX3ZHu01yiPqFbQfXf5WRDLenVOavS\n" +
+	"ot+3i9DAgBkcRcAtjOj4LaR0VknFBbVPFd5uRHg5h6h+u/N5GJG79G+dwfCMNYxd\n" +
+	"AfvDbbnvRG15RjF+Cv6pgsH/76tuIMRQyV+dTZsXjAzlAcmgQWpzU/qlULRuJQ/7\n" +
+	"TBj0/VLZjmmx6BEP3ojY+x1J96relc8geMJgEtslQIxq/H5COEBkEveegeGTLg==\n" +
+	"-----END CERTIFICATE-----\n"
