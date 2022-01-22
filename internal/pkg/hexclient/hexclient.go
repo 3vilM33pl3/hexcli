@@ -1,4 +1,4 @@
-package cmd
+package hexclient
 
 import (
 	"context"
@@ -9,7 +9,6 @@ import (
 	"github.com/3vilM33pl3/hexclient/internal/pkg/hexcloud"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
-	"google.golang.org/protobuf/types/known/emptypb"
 	"io/ioutil"
 	"runtime"
 	"strings"
@@ -37,27 +36,33 @@ func NewClient(serverAddr string, secure bool) (c *Client, err error) {
 	return
 }
 
-func (c *Client) Status() (message string, err error) {
+func (c *Client) GetHexagonRing(hex *hexcloud.Hex, radius int64, fill bool) (response *hexcloud.HexCubeResponse,err error){
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	status, err := c.grpcClient.GetStatus(ctx, &emptypb.Empty{})
+	hexRequest := &hexcloud.HexagonRingRequest{
+		Hex:    hex,
+		Radius: radius,
+		Fill:   fill,
+	}
+
+	response, err = c.grpcClient.GetHexagonRing(ctx, hexRequest)
+	if err != nil {
+		return response, err
+	}
+
+	return response, nil
+}
+
+func (c *Client) StatusServer() (message string, err error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	status, err := c.grpcClient.GetStatusServer(ctx, &hexcloud.Empty{})
 	if err != nil {
 		return "", err
 	}
 	return status.Msg, nil
-}
-
-func (c *Client) addPortNumber(serverAddr string) (string, error) {
-	if !strings.Contains(serverAddr, ":") {
-		if c.secure {
-			return serverAddr + ":" + "443", nil
-		} else {
-			return serverAddr + ":" + "80", nil
-		}
-	}
-
-	return serverAddr, nil
 }
 
 func (c *Client) Connect() (err error) {
@@ -100,6 +105,18 @@ func (c *Client) Connect() (err error) {
 	c.grpcClient = hexcloud.NewHexagonServiceClient(conn)
 
 	return nil
+}
+
+func (c *Client) addPortNumber(serverAddr string) (string, error) {
+	if !strings.Contains(serverAddr, ":") {
+		if c.secure {
+			return serverAddr + ":" + "443", nil
+		} else {
+			return serverAddr + ":" + "80", nil
+		}
+	}
+
+	return serverAddr, nil
 }
 
 var rootCert string = "-----BEGIN CERTIFICATE-----\n" +
