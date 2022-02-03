@@ -9,7 +9,6 @@ import (
 	"github.com/3vilM33pl3/hexclient/internal/pkg/hexcloud"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
-	"google.golang.org/protobuf/types/known/emptypb"
 	"io/ioutil"
 	"runtime"
 	"strings"
@@ -37,11 +36,50 @@ func NewClient(serverAddr string, secure bool) (c *Client, err error) {
 	return
 }
 
-func (c *Client) Status() (message string, err error) {
+func (c *Client) RepoAddHexagon(hexList *hexcloud.HexRefList) (err error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	status, err := c.grpcClient.GetStatus(ctx, &emptypb.Empty{})
+	result, err := c.grpcClient.RepoAddHexagons(ctx, hexList)
+
+	if err != nil {
+		return err
+	}
+
+	if !result.Success {
+		return errors.New("hexagons not added to repo")
+	}
+
+	return nil
+}
+
+func (c *Client) StatusServer() (message string, err error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	status, err := c.grpcClient.GetStatusServer(ctx, &hexcloud.Empty{})
+	if err != nil {
+		return "", err
+	}
+	return status.Msg, nil
+}
+
+func (c *Client) StatusStorage() (message string, err error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	status, err := c.grpcClient.GetStatusStorage(ctx, &hexcloud.Empty{})
+	if err != nil {
+		return "", err
+	}
+	return status.Msg, nil
+}
+
+func (c *Client) StatusClients() (message string, err error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	status, err := c.grpcClient.GetStatusClients(ctx, &hexcloud.Empty{})
 	if err != nil {
 		return "", err
 	}
