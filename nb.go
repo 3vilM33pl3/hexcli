@@ -7,5 +7,5 @@ package main
 import "github.com/3vilM33pl3/hexclient/cmd"
 
 func main() {
-	cmd.Execute()
+	hexclient.Execute()
 }
