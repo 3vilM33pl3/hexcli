@@ -2,12 +2,12 @@
 Copyright © 2022 NAME HERE <EMAIL ADDRESS>
 
 */
-package cmd
+package hexclient
 
 import (
 	"fmt"
+	cmd2 "github.com/3vilM33pl3/hexclient/internal/pkg/hexclient"
 	"github.com/3vilM33pl3/hexclient/internal/pkg/hexcloud"
-
 	"github.com/spf13/cobra"
 )
 
@@ -69,7 +69,7 @@ var repoAddCmd = &cobra.Command{
 		serverAddr, _ := cmd.Flags().GetString("addr")
 		secure, _ := cmd.Flags().GetBool("secure")
 
-		client, err := NewClient(serverAddr, secure)
+		client, err := cmd2.NewClient(serverAddr, secure)
 		var refList hexcloud.HexRefList
 
 		for _, ref := range args {
@@ -110,7 +110,7 @@ var hexStatusServerCmd = &cobra.Command{
 		serverAddr, _ := cmd.Flags().GetString("addr")
 		secure, _ := cmd.Flags().GetBool("secure")
 
-		client, err := NewClient(serverAddr, secure)
+		client, err := cmd2.NewClient(serverAddr, secure)
 		if err != nil {
 			fmt.Printf("Error connecting %s", err)
 			return
@@ -137,7 +137,7 @@ var hexStatusStorageCmd = &cobra.Command{
 		}
 
 		secure, _ := cmd.Flags().GetBool("secure")
-		client, err := NewClient(serverAddr, secure)
+		client, err := cmd2.NewClient(serverAddr, secure)
 
 		if err != nil {
 			fmt.Printf("Error connecting %s", err)
@@ -164,7 +164,7 @@ var hexStatusClientCmd = &cobra.Command{
 		}
 
 		secure, _ := cmd.Flags().GetBool("secure")
-		client, err := NewClient(serverAddr, secure)
+		client, err := cmd2.NewClient(serverAddr, secure)
 
 		if err != nil {
 			fmt.Printf("Error connecting %s", err)
