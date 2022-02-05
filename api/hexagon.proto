@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-option go_package = "/hexcloud";
+option go_package = "/hexcli";
 
 package endpoints.hexworld.hexcloud;
 

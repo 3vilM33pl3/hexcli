@@ -1,4 +1,4 @@
-package cmd
+package hexclient
 
 import (
 	"context"
@@ -6,7 +6,7 @@ import (
 	"crypto/x509"
 	"errors"
 	"fmt"
-	"github.com/3vilM33pl3/hexclient/internal/pkg/hexcloud"
+	"github.com/3vilm33pl3/hexcli/internal/pkg/hexcli"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
 	"io/ioutil"
@@ -16,7 +16,7 @@ import (
 )
 
 type Client struct {
-	grpcClient hexcloud.HexagonServiceClient
+	grpcClient hexcli.HexagonServiceClient
 	secure     bool
 	serverAddr string
 }
@@ -36,7 +36,7 @@ func NewClient(serverAddr string, secure bool) (c *Client, err error) {
 	return
 }
 
-func (c *Client) RepoAddHexagon(hexList *hexcloud.HexRefList) (err error) {
+func (c *Client) RepoAddHexagon(hexList *hexcli.HexRefList) (err error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
@@ -57,7 +57,7 @@ func (c *Client) StatusServer() (message string, err error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	status, err := c.grpcClient.GetStatusServer(ctx, &hexcloud.Empty{})
+	status, err := c.grpcClient.GetStatusServer(ctx, &hexcli.Empty{})
 	if err != nil {
 		return "", err
 	}
@@ -68,7 +68,7 @@ func (c *Client) StatusStorage() (message string, err error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	status, err := c.grpcClient.GetStatusStorage(ctx, &hexcloud.Empty{})
+	status, err := c.grpcClient.GetStatusStorage(ctx, &hexcli.Empty{})
 	if err != nil {
 		return "", err
 	}
@@ -79,7 +79,7 @@ func (c *Client) StatusClients() (message string, err error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	status, err := c.grpcClient.GetStatusClients(ctx, &hexcloud.Empty{})
+	status, err := c.grpcClient.GetStatusClients(ctx, &hexcli.Empty{})
 	if err != nil {
 		return "", err
 	}
@@ -135,7 +135,7 @@ func (c *Client) Connect() (err error) {
 	if err != nil {
 		return fmt.Errorf("Unable to connect: %s", err)
 	}
-	c.grpcClient = hexcloud.NewHexagonServiceClient(conn)
+	c.grpcClient = hexcli.NewHexagonServiceClient(conn)
 
 	return nil
 }
