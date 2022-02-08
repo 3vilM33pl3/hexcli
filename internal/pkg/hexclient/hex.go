@@ -89,7 +89,22 @@ var repoDelCmd = &cobra.Command{
 	Use:   "del [ref]",
 	Short: "delete hexagon from repository with reference [ref] ",
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Printf("Inside repo delete command: %v\n", args)
+		serverAddr, _ := cmd.Flags().GetString("addr")
+		secure, _ := cmd.Flags().GetBool("secure")
+
+		client, err := NewClient(serverAddr, secure)
+		var refList hexcli.HexRefList
+
+		for _, ref := range args {
+			refList.Ref = append(refList.Ref, &hexcli.HexReference{Ref: ref})
+		}
+
+		err = client.RepoDeleteHexagon(&refList)
+
+		if err != nil {
+			fmt.Printf("Error connecting %s", err)
+			return
+		}
 	},
 }
 

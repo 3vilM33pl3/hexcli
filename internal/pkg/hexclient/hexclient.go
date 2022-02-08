@@ -53,6 +53,23 @@ func (c *Client) RepoAddHexagon(hexList *hexcli.HexRefList) (err error) {
 	return nil
 }
 
+func (c *Client) RepoDeleteHexagon(hexList *hexcli.HexRefList) (err error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	result, err := c.grpcClient.RepoDelHexagons(ctx, hexList)
+
+	if err != nil {
+		return err
+	}
+
+	if !result.Success {
+		return errors.New("hexagons not deleted from repo")
+	}
+
+	return nil
+}
+
 func (c *Client) StatusServer() (message string, err error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
