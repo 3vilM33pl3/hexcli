@@ -25,7 +25,7 @@ run-repo-del:
 	go run nb.go repo del 1000-0000-0000-0000 --secure=$(SECURE) --addr=$(ADDRESS)
 
 run-hex-place:
-	go run nb.go hex place 0 0 0 0000-0000-0000-0000  --secure=$(SECURE) --addr=$(ADDRESS)
+	go run nb.go hex place --secure=$(SECURE) --addr=$(ADDRESS) -- 0 -5 5 N 0000-0000-0000-0000
 
 run-hex-get:
 	go run nb.go hex get 0 0 0 --radius=1 --secure=$(SECURE) --addr=$(ADDRESS)

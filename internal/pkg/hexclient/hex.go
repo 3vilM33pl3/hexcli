@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"github.com/3vilm33pl3/hexcli/internal/pkg/hexcli"
 	"github.com/spf13/cobra"
+	"strconv"
 )
 
 // hexCmd represents the hex command
@@ -21,10 +22,74 @@ var hexCmd = &cobra.Command{
 }
 
 var hexPlaceCmd = &cobra.Command{
-	Use:   "place [x,y,z] [content]",
+	Use:   "place [x,y,z] [direction] [content]",
 	Short: "add hexagon with coordinate [x,y,z] and compressed content file [content]",
+	Long: "Example: nb hex place --secure=false -- 0 -5 5 N 0000-0000-0000-0000" +
+		"The double dash is needed to indicate no more flags are coming and everything is interpreted as an normal argument. " +
+		"This is needed so that negative numbers don't get interpreted as flags",
+	Args: cobra.ArbitraryArgs,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Printf("Inside hex place command: %v\n", args)
+		serverAddr, _ := cmd.Flags().GetString("addr")
+		secure, _ := cmd.Flags().GetBool("secure")
+
+		client, err := NewClient(serverAddr, secure)
+
+		x, err := strconv.ParseInt(args[0], 10, 64)
+		if err != nil {
+			fmt.Printf("x value is not a number %s : %e", args[0], err)
+			return
+		}
+
+		y, err := strconv.ParseInt(args[1], 10, 64)
+		if err != nil {
+			fmt.Printf("y value is not a number %s : %e", args[1], err)
+			return
+		}
+
+		z, err := strconv.ParseInt(args[2], 10, 64)
+		if err != nil {
+			fmt.Printf("z value is not a number %s : %e", args[2], err)
+			return
+		}
+
+		var hexDirection hexcli.Direction
+		switch args[3] {
+		case "N":
+			hexDirection = hexcli.Direction_N
+		case "NE":
+			hexDirection = hexcli.Direction_NE
+		case "E":
+			hexDirection = hexcli.Direction_E
+		case "SE":
+			hexDirection = hexcli.Direction_SE
+		case "S":
+			hexDirection = hexcli.Direction_S
+		case "SW":
+			hexDirection = hexcli.Direction_SW
+		case "W":
+			hexDirection = hexcli.Direction_W
+		case "NW":
+			hexDirection = hexcli.Direction_NW
+		default:
+			fmt.Printf("direction value is not a valid direction %s ", args[3])
+			return
+		}
+
+		hex := &hexcli.Hex{
+			X:         x,
+			Y:         y,
+			Z:         z,
+			Direction: hexDirection,
+			Reference: "",
+		}
+
+		err = client.HexagonPlace(hex)
+
+		if err != nil {
+			fmt.Printf("Error placing hexagon on map: %s", err)
+			return
+		}
+
 	},
 }
 

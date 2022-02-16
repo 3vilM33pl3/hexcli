@@ -70,6 +70,23 @@ func (c *Client) RepoDeleteHexagon(hexList *hexcli.HexRefList) (err error) {
 	return nil
 }
 
+func (c *Client) HexagonPlace(hex *hexcli.Hex) (err error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	result, err := c.grpcClient.HexagonPlace(ctx, hex)
+
+	if err != nil {
+		return err
+	}
+
+	if !result.Success {
+		return errors.New("hexagons not placed on map")
+	}
+
+	return nil
+}
+
 func (c *Client) StatusServer() (message string, err error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
