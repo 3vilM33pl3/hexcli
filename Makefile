@@ -31,7 +31,7 @@ run-hex-get:
 	go run nb.go hex get 0 0 0 --radius=1 --secure=$(SECURE) --addr=$(ADDRESS)
 
 run-hex-rm:
-	go run nb.go 0 0 0 --secure=$(SECURE) --addr=$(ADDRESS)
+	go run nb.go hex rm --secure=$(SECURE) --addr=$(ADDRESS) -- 0 -5 5
 
 run-hex-info:
 	go run nb.go hex info 0 0 0 --secure=$(SECURE) --addr=$(ADDRESS)

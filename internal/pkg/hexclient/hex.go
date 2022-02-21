@@ -34,21 +34,8 @@ var hexPlaceCmd = &cobra.Command{
 
 		client, err := NewClient(serverAddr, secure)
 
-		x, err := strconv.ParseInt(args[0], 10, 64)
+		x, y, z, err := extractHexCoord(args)
 		if err != nil {
-			fmt.Printf("x value is not a number %s : %e", args[0], err)
-			return
-		}
-
-		y, err := strconv.ParseInt(args[1], 10, 64)
-		if err != nil {
-			fmt.Printf("y value is not a number %s : %e", args[1], err)
-			return
-		}
-
-		z, err := strconv.ParseInt(args[2], 10, 64)
-		if err != nil {
-			fmt.Printf("z value is not a number %s : %e", args[2], err)
 			return
 		}
 
@@ -93,6 +80,27 @@ var hexPlaceCmd = &cobra.Command{
 	},
 }
 
+func extractHexCoord(args []string) (x int64, y int64, z int64, err error) {
+	x, err = strconv.ParseInt(args[0], 10, 64)
+	if err != nil {
+		fmt.Printf("x value is not a number %s : %e", args[0], err)
+		return x, y, z, err
+	}
+
+	y, err = strconv.ParseInt(args[1], 10, 64)
+	if err != nil {
+		fmt.Printf("y value is not a number %s : %e", args[1], err)
+		return x, y, z, err
+	}
+
+	z, err = strconv.ParseInt(args[2], 10, 64)
+	if err != nil {
+		fmt.Printf("z value is not a number %s : %e", args[2], err)
+		return x, y, z, err
+	}
+	return x, y, z, nil
+}
+
 var hexGetCmd = &cobra.Command{
 	Use:   "get",
 	Short: "get hexagon at `coord` [x,y,z]",
@@ -105,7 +113,34 @@ var hexRemoveCmd = &cobra.Command{
 	Use:   "rm",
 	Short: "remove hexagon at `coord` [x,y,z]",
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Printf("Inside hex remove command: %v\n", args)
+		serverAddr, _ := cmd.Flags().GetString("addr")
+		secure, _ := cmd.Flags().GetBool("secure")
+
+		client, err := NewClient(serverAddr, secure)
+		var refList hexcli.HexRefList
+
+		for _, ref := range args {
+			refList.Ref = append(refList.Ref, &hexcli.HexReference{Ref: ref})
+		}
+
+		var hexList hexcli.HexList
+
+		x, y, z, err := extractHexCoord(args)
+		if err != nil {
+			return
+		}
+
+		hex := &hexcli.Hex{
+			X:         x,
+			Y:         y,
+			Z:         z,
+			Direction: hexcli.Direction_N,
+			Reference: "",
+		}
+
+		hexList.Hex = append(hexList.Hex, hex)
+		err = client.HexagonRemove(&hexList)
+
 	},
 }
 

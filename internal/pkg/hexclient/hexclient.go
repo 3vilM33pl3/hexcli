@@ -87,6 +87,23 @@ func (c *Client) HexagonPlace(hex *hexcli.Hex) (err error) {
 	return nil
 }
 
+func (c *Client) HexagonRemove(hexList *hexcli.HexList) (err error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	result, err := c.grpcClient.HexagonRemove(ctx, hexList)
+
+	if err != nil {
+		return err
+	}
+
+	if !result.Success {
+		return errors.New("hexagons not placed on map")
+	}
+
+	return
+}
+
 func (c *Client) StatusServer() (message string, err error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
