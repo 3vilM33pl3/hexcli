@@ -23,4 +23,24 @@ func Execute() {
 
 func init() {
 
+	rootCmd.AddCommand(mapCmd)
+	mapCmd.AddCommand(mapAddCmd)
+	mapCmd.AddCommand(mapGetCmd)
+	mapCmd.AddCommand(mapRemoveCmd)
+
+	rootCmd.AddCommand(hexCmd)
+	hexCmd.AddCommand(hexInfoCmd)
+
+	rootCmd.AddCommand(repoCmd)
+	repoCmd.AddCommand(repoAddCmd)
+	repoCmd.AddCommand(repoDelCmd)
+
+	rootCmd.AddCommand(hexStatusCmd)
+	hexStatusCmd.AddCommand(hexStatusServerCmd)
+	hexStatusCmd.AddCommand(hexStatusStorageCmd)
+	hexStatusCmd.AddCommand(hexStatusClientCmd)
+
+	rootCmd.PersistentFlags().BoolP("secure", "s", true, "secure connection")
+	rootCmd.PersistentFlags().StringP("addr", "a", "localhost:8080", "server address")
+
 }
