@@ -70,11 +70,11 @@ func (c *Client) RepoDeleteHexagon(hexList *hexcli.HexRefList) (err error) {
 	return nil
 }
 
-func (c *Client) HexagonPlace(hex *hexcli.Hex) (err error) {
+func (c *Client) MapAdd(hex *hexcli.Hex) (err error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	result, err := c.grpcClient.HexagonPlace(ctx, hex)
+	result, err := c.grpcClient.MapAdd(ctx, hex)
 
 	if err != nil {
 		return err
@@ -87,11 +87,11 @@ func (c *Client) HexagonPlace(hex *hexcli.Hex) (err error) {
 	return nil
 }
 
-func (c *Client) HexagonRemove(hexList *hexcli.HexList) (err error) {
+func (c *Client) MapRemove(hexList *hexcli.HexList) (err error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	result, err := c.grpcClient.HexagonRemove(ctx, hexList)
+	result, err := c.grpcClient.MapRemove(ctx, hexList)
 
 	if err != nil {
 		return err
@@ -102,6 +102,28 @@ func (c *Client) HexagonRemove(hexList *hexcli.HexList) (err error) {
 	}
 
 	return
+}
+
+func (c *Client) MapGet(hex *hexcli.Hex, radius int64) (hexList *hexcli.HexList, err error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	request := hexcli.HexagonGetRequest{
+		Hex: &hexcli.Hex{
+			X: hex.X,
+			Y: hex.Y,
+			Z: hex.Z,
+		},
+		Radius: radius,
+		Fill:   false,
+	}
+	result, err := c.grpcClient.MapGet(ctx, &request)
+
+	if err != nil {
+		return hexList, err
+	}
+
+	return result, nil
 }
 
 func (c *Client) StatusServer() (message string, err error) {

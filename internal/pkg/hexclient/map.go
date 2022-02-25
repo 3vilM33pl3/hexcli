@@ -17,8 +17,8 @@ var mapCmd = &cobra.Command{
 }
 
 var mapAddCmd = &cobra.Command{
-	Use:   "add [x,y,z] [direction] [content]",
-	Short: "add hexagon with coordinate [x,y,z] and compressed content file [content]",
+	Use:   "add [x,y,z] [direction] [content ref]",
+	Short: "add hexagon with coordinate [x,y,z] and content reference [content ref]",
 	Long: "Example: nb hex place --secure=false -- 0 -5 5 N 0000-0000-0000-0000" +
 		"The double dash is needed to indicate no more flags are coming and everything is interpreted as an normal argument. " +
 		"This is needed so that negative numbers don't get interpreted as flags",
@@ -65,7 +65,7 @@ var mapAddCmd = &cobra.Command{
 			Reference: "",
 		}
 
-		err = client.HexagonPlace(hex)
+		err = client.MapAdd(hex)
 
 		if err != nil {
 			fmt.Printf("Error placing hexagon on map: %s", err)
@@ -79,7 +79,32 @@ var mapGetCmd = &cobra.Command{
 	Use:   "get",
 	Short: "get hexagon at `coord` [x,y,z]",
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Printf("Inside hex get command: %v\n", args)
+		serverAddr, _ := cmd.Flags().GetString("addr")
+		secure, _ := cmd.Flags().GetBool("secure")
+		radius, _ := cmd.Flags().GetInt64("radius")
+
+		client, err := NewClient(serverAddr, secure)
+
+		x, y, z, err := extractHexCoord(args)
+		if err != nil {
+			return
+		}
+
+		result, err := client.MapGet(&hexcli.Hex{
+			X: x,
+			Y: y,
+			Z: z,
+		}, radius)
+
+		if err != nil {
+			fmt.Printf("Error retrieving hexagon information on map: %s", err)
+			return
+		}
+
+		for _, hex := range result.Hex {
+			fmt.Printf("%d %d %d %s %s\n", hex.X, hex.Y, hex.Z, hex.Direction, hex.Reference)
+		}
+
 	},
 }
 
@@ -113,7 +138,7 @@ var mapRemoveCmd = &cobra.Command{
 		}
 
 		hexList.Hex = append(hexList.Hex, hex)
-		err = client.HexagonRemove(&hexList)
+		err = client.MapRemove(&hexList)
 
 	},
 }

@@ -24,13 +24,13 @@ run-repo-add:
 run-repo-del:
 	go run nb.go repo del 1000-0000-0000-0000 --secure=$(SECURE) --addr=$(ADDRESS)
 
-run-hex-add:
+run-map-add:
 	go run nb.go map add --secure=$(SECURE) --addr=$(ADDRESS) -- 0 -5 5 N 0000-0000-0000-0000
 
-run-hex-get:
-	go run nb.go map get 0 0 0 --radius=1 --secure=$(SECURE) --addr=$(ADDRESS)
+run-map-get:
+	go run nb.go map get --radius=0 --secure=$(SECURE) --addr=$(ADDRESS) -- 0 -5 5
 
-run-hex-rm:
+run-map-rm:
 	go run nb.go map rm --secure=$(SECURE) --addr=$(ADDRESS) -- 0 -5 5
 
 run-hex-info:
