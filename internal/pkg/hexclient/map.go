@@ -57,12 +57,12 @@ var mapAddCmd = &cobra.Command{
 			return
 		}
 
-		hex := &hexcli.Hex{
+		hex := &hexcli.HexLocation{
 			X:         x,
 			Y:         y,
 			Z:         z,
 			Direction: hexDirection,
-			Reference: "",
+			HexID:     "",
 		}
 
 		err = client.MapAdd(hex)
@@ -90,7 +90,7 @@ var mapGetCmd = &cobra.Command{
 			return
 		}
 
-		result, err := client.MapGet(&hexcli.Hex{
+		result, err := client.MapGet(&hexcli.HexLocation{
 			X: x,
 			Y: y,
 			Z: z,
@@ -101,8 +101,8 @@ var mapGetCmd = &cobra.Command{
 			return
 		}
 
-		for _, hex := range result.Hex {
-			fmt.Printf("%d %d %d %s %s\n", hex.X, hex.Y, hex.Z, hex.Direction, hex.Reference)
+		for _, hex := range result.HexLoc {
+			fmt.Printf("%d %d %d %s %s\n", hex.X, hex.Y, hex.Z, hex.Direction, hex.HexID)
 		}
 
 	},
@@ -116,28 +116,22 @@ var mapRemoveCmd = &cobra.Command{
 		secure, _ := cmd.Flags().GetBool("secure")
 
 		client, err := NewClient(serverAddr, secure)
-		var refList hexcli.HexRefList
-
-		for _, ref := range args {
-			refList.Ref = append(refList.Ref, &hexcli.HexReference{Ref: ref})
-		}
-
-		var hexList hexcli.HexList
+		var hexList hexcli.HexLocationList
 
 		x, y, z, err := extractHexCoord(args)
 		if err != nil {
 			return
 		}
 
-		hex := &hexcli.Hex{
+		hex := &hexcli.HexLocation{
 			X:         x,
 			Y:         y,
 			Z:         z,
 			Direction: hexcli.Direction_N,
-			Reference: "",
+			HexID:     "",
 		}
 
-		hexList.Hex = append(hexList.Hex, hex)
+		hexList.HexLoc = append(hexList.HexLoc, hex)
 		err = client.MapRemove(&hexList)
 
 	},

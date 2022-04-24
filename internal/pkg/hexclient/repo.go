@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/3vilm33pl3/hexcli/internal/pkg/hexcli"
 	"github.com/spf13/cobra"
+	"strconv"
 )
 
 var repoCmd = &cobra.Command{
@@ -16,20 +17,24 @@ var repoCmd = &cobra.Command{
 }
 
 var repoAddCmd = &cobra.Command{
-	Use:   "add [ref]",
-	Short: "add hexagon to repository with reference [ref]",
+	Use:   "add [ref] [exits]",
+	Short: "add hexagon to repository with reference [ref] and [exits]",
 	Run: func(cmd *cobra.Command, args []string) {
 		serverAddr, _ := cmd.Flags().GetString("addr")
 		secure, _ := cmd.Flags().GetBool("secure")
 
 		client, err := NewClient(serverAddr, secure)
-		var refList hexcli.HexRefList
+		var infoList hexcli.HexInfoList
 
-		for _, ref := range args {
-			refList.Ref = append(refList.Ref, &hexcli.HexReference{Ref: ref})
+		ref := args[0]
+		exits, err := strconv.Atoi(args[1])
+		if err != nil {
+			fmt.Printf("Error parsing exits %s", err)
 		}
 
-		err = client.RepoAddHexagon(&refList)
+		infoList.HexInfo = append(infoList.HexInfo, &hexcli.HexInfo{ID: ref, Exits: uint32(exits)})
+
+		err = client.RepoAddHexagon(&infoList)
 
 		if err != nil {
 			fmt.Printf("Error connecting %s", err)
@@ -47,13 +52,13 @@ var repoDelCmd = &cobra.Command{
 		secure, _ := cmd.Flags().GetBool("secure")
 
 		client, err := NewClient(serverAddr, secure)
-		var refList hexcli.HexRefList
+		var infoList hexcli.HexIDList
 
-		for _, ref := range args {
-			refList.Ref = append(refList.Ref, &hexcli.HexReference{Ref: ref})
+		for _, id := range args {
+			infoList.HexID = append(infoList.HexID, id)
 		}
 
-		err = client.RepoDeleteHexagon(&refList)
+		err = client.RepoDeleteHexagon(&infoList)
 
 		if err != nil {
 			fmt.Printf("Error connecting %s", err)

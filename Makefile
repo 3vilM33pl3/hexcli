@@ -19,7 +19,7 @@ run-help-hex:
 	go run nb.go hex -h
 
 run-repo-add:
-	go run nb.go repo add 1000-0000-0000-0000 --secure=$(SECURE) --addr=$(ADDRESS)
+	go run nb.go repo add 1000-0000-0000-0000 32 --secure=$(SECURE) --addr=$(ADDRESS)
 
 run-repo-del:
 	go run nb.go repo del 1000-0000-0000-0000 --secure=$(SECURE) --addr=$(ADDRESS)

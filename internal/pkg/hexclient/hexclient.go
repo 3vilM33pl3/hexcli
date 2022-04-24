@@ -36,11 +36,11 @@ func NewClient(serverAddr string, secure bool) (c *Client, err error) {
 	return
 }
 
-func (c *Client) RepoAddHexagon(hexList *hexcli.HexRefList) (err error) {
+func (c *Client) RepoAddHexagon(hexInfoList *hexcli.HexInfoList) (err error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	result, err := c.grpcClient.RepoAddHexagons(ctx, hexList)
+	result, err := c.grpcClient.RepoAddHexagons(ctx, hexInfoList)
 
 	if err != nil {
 		return err
@@ -53,11 +53,11 @@ func (c *Client) RepoAddHexagon(hexList *hexcli.HexRefList) (err error) {
 	return nil
 }
 
-func (c *Client) RepoDeleteHexagon(hexList *hexcli.HexRefList) (err error) {
+func (c *Client) RepoDeleteHexagon(hexIDList *hexcli.HexIDList) (err error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	result, err := c.grpcClient.RepoDelHexagons(ctx, hexList)
+	result, err := c.grpcClient.RepoDelHexagons(ctx, hexIDList)
 
 	if err != nil {
 		return err
@@ -70,11 +70,11 @@ func (c *Client) RepoDeleteHexagon(hexList *hexcli.HexRefList) (err error) {
 	return nil
 }
 
-func (c *Client) MapAdd(hex *hexcli.Hex) (err error) {
+func (c *Client) MapAdd(hexLocation *hexcli.HexLocation) (err error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	result, err := c.grpcClient.MapAdd(ctx, hex)
+	result, err := c.grpcClient.MapAdd(ctx, hexLocation)
 
 	if err != nil {
 		return err
@@ -87,11 +87,11 @@ func (c *Client) MapAdd(hex *hexcli.Hex) (err error) {
 	return nil
 }
 
-func (c *Client) MapRemove(hexList *hexcli.HexList) (err error) {
+func (c *Client) MapRemove(hexLocationList *hexcli.HexLocationList) (err error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	result, err := c.grpcClient.MapRemove(ctx, hexList)
+	result, err := c.grpcClient.MapRemove(ctx, hexLocationList)
 
 	if err != nil {
 		return err
@@ -104,15 +104,15 @@ func (c *Client) MapRemove(hexList *hexcli.HexList) (err error) {
 	return
 }
 
-func (c *Client) MapGet(hex *hexcli.Hex, radius int64) (hexList *hexcli.HexList, err error) {
+func (c *Client) MapGet(hexLocation *hexcli.HexLocation, radius int64) (hexList *hexcli.HexLocationList, err error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
 	request := hexcli.HexagonGetRequest{
-		Hex: &hexcli.Hex{
-			X: hex.X,
-			Y: hex.Y,
-			Z: hex.Z,
+		HexLoc: &hexcli.HexLocation{
+			X: hexLocation.X,
+			Y: hexLocation.Y,
+			Z: hexLocation.Z,
 		},
 		Radius: radius,
 		Fill:   false,
