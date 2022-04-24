@@ -16,7 +16,7 @@ Command line interface to manipulate game content
     nb content upload [pack]
     nb content download [ref]
 
-## Run locally
+## Use with server
 Run [`hexcloud`](https://github.com/3vilM33pl3/hexcloud) server. The server listens to 0.0.0.0:8080 by default.
 
 `go run .\cmd\hexcloud\hexcloud.go --local=true`
