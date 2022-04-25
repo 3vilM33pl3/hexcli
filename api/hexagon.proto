@@ -57,14 +57,14 @@ message Result {
 }
 
 service HexagonService {
-  rpc RepoAddHexagons(HexInfoList) returns(Result);
-  rpc RepoDelHexagons(HexIDList) returns(Result);
+  rpc RepoAddHexagonInfo(HexInfoList) returns(Result);
+  rpc RepoDelHexagonInfo(HexIDList) returns(Result);
+  rpc RepoGetHexagonInfo(HexIDList) returns(HexInfoList);
+  rpc RepoGetAllHexagonInfo(Empty) returns(HexInfoList);
 
   rpc MapAdd(HexLocation) returns (Result);
   rpc MapGet(HexagonGetRequest) returns (HexLocationList);
   rpc MapRemove(HexLocationList) returns(Result);
-
-  rpc HexagonInfo(HexIDList) returns(HexInfoList);
 
   rpc GetStatusServer(Empty) returns(Status);
   rpc GetStatusStorage(Empty) returns(Status);

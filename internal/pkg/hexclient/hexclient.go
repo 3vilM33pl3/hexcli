@@ -36,11 +36,11 @@ func NewClient(serverAddr string, secure bool) (c *Client, err error) {
 	return
 }
 
-func (c *Client) RepoAddHexagon(hexInfoList *hexcli.HexInfoList) (err error) {
+func (c *Client) RepoAddHexagonInfo(hexInfoList *hexcli.HexInfoList) (err error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	result, err := c.grpcClient.RepoAddHexagons(ctx, hexInfoList)
+	result, err := c.grpcClient.RepoAddHexagonInfo(ctx, hexInfoList)
 
 	if err != nil {
 		return err
@@ -53,11 +53,11 @@ func (c *Client) RepoAddHexagon(hexInfoList *hexcli.HexInfoList) (err error) {
 	return nil
 }
 
-func (c *Client) RepoDeleteHexagon(hexIDList *hexcli.HexIDList) (err error) {
+func (c *Client) RepoDeleteHexagonInfo(hexIDList *hexcli.HexIDList) (err error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	result, err := c.grpcClient.RepoDelHexagons(ctx, hexIDList)
+	result, err := c.grpcClient.RepoDelHexagonInfo(ctx, hexIDList)
 
 	if err != nil {
 		return err
@@ -68,6 +68,32 @@ func (c *Client) RepoDeleteHexagon(hexIDList *hexcli.HexIDList) (err error) {
 	}
 
 	return nil
+}
+
+func (c *Client) RepoGetHexagonInfo(hexIDList *hexcli.HexIDList) (hexInfoList *hexcli.HexInfoList, err error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	result, err := c.grpcClient.RepoGetHexagonInfo(ctx, hexIDList)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return result, nil
+}
+
+func (c *Client) RepoGetAllHexagonInfo() (hexInfoList *hexcli.HexInfoList, err error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	result, err := c.grpcClient.RepoGetAllHexagonInfo(ctx, &hexcli.Empty{})
+
+	if err != nil {
+		return nil, err
+	}
+
+	return result, nil
 }
 
 func (c *Client) MapAdd(hexLocation *hexcli.HexLocation) (err error) {

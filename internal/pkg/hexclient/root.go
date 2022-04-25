@@ -35,7 +35,10 @@ func init() {
 
 	rootCmd.AddCommand(repoCmd)
 	repoCmd.AddCommand(repoAddCmd)
+	repoAddCmd.AddCommand(repoAddFileCmd)
 	repoCmd.AddCommand(repoDelCmd)
+	repoCmd.AddCommand(repoGetCmd)
+	repoGetCmd.AddCommand(repoGetAllCmd)
 
 	rootCmd.AddCommand(hexStatusCmd)
 	hexStatusCmd.AddCommand(hexStatusServerCmd)
