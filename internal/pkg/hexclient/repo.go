@@ -8,7 +8,6 @@ import (
 	"github.com/spf13/cobra"
 	"log"
 	"os"
-	"strconv"
 )
 
 var repoCmd = &cobra.Command{
@@ -21,7 +20,7 @@ var repoCmd = &cobra.Command{
 }
 
 var repoAddCmd = &cobra.Command{
-	Use:   "add [ref] [exits]",
+	Use:   "add [ref]",
 	Short: "add hexagon to repository with reference [ref] and [exits]",
 	Run: func(cmd *cobra.Command, args []string) {
 		serverAddr, _ := cmd.Flags().GetString("addr")
@@ -31,11 +30,10 @@ var repoAddCmd = &cobra.Command{
 		var infoList hexcli.HexInfoList
 
 		ref := args[0]
-		exits, err := strconv.Atoi(args[1])
 		if err != nil {
 			fmt.Printf("Error parsing exits %s", err)
 		}
-		infoList.HexInfo = append(infoList.HexInfo, &hexcli.HexInfo{ID: ref, Exits: uint32(exits)})
+		infoList.HexInfo = append(infoList.HexInfo, &hexcli.HexInfo{ID: ref})
 
 		err = client.RepoAddHexagonInfo(&infoList)
 		if err != nil {
@@ -68,17 +66,48 @@ var repoAddFileCmd = &cobra.Command{
 			return
 		}
 
-		for i, line := range csvLines {
-			exits, err := strconv.Atoi(line[1])
-			if err != nil {
-				fmt.Printf("Skipping line %d: %s\n", i, err)
-			}
+		for _, line := range csvLines {
 			hexInfo := &hexcli.HexInfo{
-				ID:    line[0],
-				Exits: uint32(exits),
+				ID: line[0],
 			}
 			infoList.HexInfo = append(infoList.HexInfo, hexInfo)
 		}
+
+		err = client.RepoAddHexagonInfo(&infoList)
+		if err != nil {
+			fmt.Printf("Error connecting %s", err)
+			return
+		}
+
+	},
+}
+
+var repoAddDataCmd = &cobra.Command{
+	Use:   "data [ref] [key] [value]",
+	Short: "add data hexagon",
+	Run: func(cmd *cobra.Command, args []string) {
+		serverAddr, _ := cmd.Flags().GetString("addr")
+		secure, _ := cmd.Flags().GetBool("secure")
+
+		client, err := NewClient(serverAddr, secure)
+		var infoList hexcli.HexInfoList
+
+		if err != nil {
+			fmt.Printf("Error parsing exits %s", err)
+			return
+		}
+
+		if len(args) < 3 {
+			fmt.Println("Not enough arguments")
+		}
+
+		ref := args[0]
+		key := args[1]
+		value := args[2]
+		hexInfo := &hexcli.HexInfo{ID: ref}
+		hexInfo.Data = make(map[string]string)
+		hexInfo.Data[key] = value
+		infoList.HexInfo = append(infoList.HexInfo, hexInfo)
 
 		err = client.RepoAddHexagonInfo(&infoList)
 		if err != nil {
@@ -134,7 +163,10 @@ var repoGetCmd = &cobra.Command{
 		}
 
 		for _, hex := range result.HexInfo {
-			fmt.Printf("%s %d \n", hex.ID, hex.Exits)
+			fmt.Printf("%s \n", hex.ID)
+			for key, value := range hex.Data {
+				fmt.Printf("\t%s: %s\n", key, value)
+			}
 		}
 	},
 }
@@ -156,7 +188,7 @@ var repoGetAllCmd = &cobra.Command{
 		}
 
 		for _, hex := range result.HexInfo {
-			fmt.Printf("%s %d \n", hex.ID, hex.Exits)
+			fmt.Printf("%s \n", hex.ID)
 		}
 	},
 }

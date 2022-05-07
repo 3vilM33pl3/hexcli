@@ -17,7 +17,7 @@ var mapCmd = &cobra.Command{
 }
 
 var mapAddCmd = &cobra.Command{
-	Use:   "add [x,y,z] [direction] [content ref]",
+	Use:   "add [x,y,z] [content ref]",
 	Short: "add hexagon with coordinate [x,y,z] and content reference [content ref]",
 	Long: "Example: nb hex place --secure=false -- 0 -5 5 N 0000-0000-0000-0000" +
 		"The double dash is needed to indicate no more flags are coming and everything is interpreted as an normal argument. " +
@@ -34,38 +34,17 @@ var mapAddCmd = &cobra.Command{
 			return
 		}
 
-		var hexDirection hexcli.Direction
-		switch args[3] {
-		case "N":
-			hexDirection = hexcli.Direction_N
-		case "NE":
-			hexDirection = hexcli.Direction_NE
-		case "E":
-			hexDirection = hexcli.Direction_E
-		case "SE":
-			hexDirection = hexcli.Direction_SE
-		case "S":
-			hexDirection = hexcli.Direction_S
-		case "SW":
-			hexDirection = hexcli.Direction_SW
-		case "W":
-			hexDirection = hexcli.Direction_W
-		case "NW":
-			hexDirection = hexcli.Direction_NW
-		default:
-			fmt.Printf("direction value is not a valid direction %s ", args[3])
-			return
-		}
-
 		hex := &hexcli.HexLocation{
-			X:         x,
-			Y:         y,
-			Z:         z,
-			Direction: hexDirection,
-			HexID:     "",
+			X:     x,
+			Y:     y,
+			Z:     z,
+			HexID: "",
 		}
 
-		err = client.MapAdd(hex)
+		hexLocList := &hexcli.HexLocationList{}
+		hexLocList.HexLoc = append(hexLocList.HexLoc, hex)
+
+		err = client.MapAdd(hexLocList)
 
 		if err != nil {
 			fmt.Printf("Error placing hexagon on map: %s", err)
@@ -102,7 +81,7 @@ var mapGetCmd = &cobra.Command{
 		}
 
 		for _, hex := range result.HexLoc {
-			fmt.Printf("%d %d %d %s %s\n", hex.X, hex.Y, hex.Z, hex.Direction, hex.HexID)
+			fmt.Printf("%d %d %d %s\n", hex.X, hex.Y, hex.Z, hex.HexID)
 		}
 
 	},
@@ -124,11 +103,10 @@ var mapRemoveCmd = &cobra.Command{
 		}
 
 		hex := &hexcli.HexLocation{
-			X:         x,
-			Y:         y,
-			Z:         z,
-			Direction: hexcli.Direction_N,
-			HexID:     "",
+			X:     x,
+			Y:     y,
+			Z:     z,
+			HexID: "",
 		}
 
 		hexList.HexLoc = append(hexList.HexLoc, hex)

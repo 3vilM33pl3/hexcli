@@ -15,14 +15,20 @@ run-help:
 run-help-repo:
 	go run nb.go repo -h
 
-run-help-hex:
-	go run nb.go hex -h
+run-help-map:
+	go run nb.go map -h
 
 run-repo-add:
-	go run nb.go repo add 1000-0000-0000-0000 32 --secure=$(SECURE) --addr=$(ADDRESS)
+	go run nb.go repo add 1000-0000-0000-0000 --secure=$(SECURE) --addr=$(ADDRESS)
+
+run-repo-add-data:
+	go run nb.go repo add data 1000-0000-0000-0000 biome swamp --secure=$(SECURE) --addr=$(ADDRESS)
+
+run-repo-get:
+	go run nb.go repo get 1000-0000-0000-0000 --secure=$(SECURE) --addr=$(ADDRESS)
 
 run-repo-add-file:
-	go run nb.go repo add 1000-0000-0000-0000 32 --secure=$(SECURE) --addr=$(ADDRESS)
+	go run nb.go repo add -f hexagons.csv --secure=$(SECURE) --addr=$(ADDRESS)
 
 run-repo-del:
 	go run nb.go repo del 1000-0000-0000-0000 --secure=$(SECURE) --addr=$(ADDRESS)

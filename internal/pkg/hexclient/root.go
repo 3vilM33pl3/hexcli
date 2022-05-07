@@ -25,17 +25,16 @@ func init() {
 
 	rootCmd.AddCommand(mapCmd)
 	mapCmd.AddCommand(mapAddCmd)
+	//mapAddCmd.AddCommand(mapAddData)
 	mapCmd.AddCommand(mapGetCmd)
 	mapCmd.AddCommand(mapRemoveCmd)
 
 	mapCmd.PersistentFlags().Int64P("radius", "r", 0, "radius of hexagon circle")
 
-	rootCmd.AddCommand(hexCmd)
-	hexCmd.AddCommand(hexInfoCmd)
-
 	rootCmd.AddCommand(repoCmd)
 	repoCmd.AddCommand(repoAddCmd)
 	repoAddCmd.AddCommand(repoAddFileCmd)
+	repoAddCmd.AddCommand(repoAddDataCmd)
 	repoCmd.AddCommand(repoDelCmd)
 	repoCmd.AddCommand(repoGetCmd)
 	repoGetCmd.AddCommand(repoGetAllCmd)

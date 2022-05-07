@@ -96,11 +96,11 @@ func (c *Client) RepoGetAllHexagonInfo() (hexInfoList *hexcli.HexInfoList, err e
 	return result, nil
 }
 
-func (c *Client) MapAdd(hexLocation *hexcli.HexLocation) (err error) {
+func (c *Client) MapAdd(hexLocationList *hexcli.HexLocationList) (err error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	result, err := c.grpcClient.MapAdd(ctx, hexLocation)
+	result, err := c.grpcClient.MapAdd(ctx, hexLocationList)
 
 	if err != nil {
 		return err

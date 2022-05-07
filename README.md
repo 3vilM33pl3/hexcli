@@ -2,15 +2,30 @@
 Command line interface to manipulate game content
 
 ## Commands
+### Help commands
+    nb -h
+    nb repo -h
+    nb map -h
+
 ### Hexagon manipulation
-    nb hex add [0,0,0] [ref]
-    nb hex get [0,0,0]
-    nb hex update [0,0,0] [ref]
-    nb hex del [0,0,0]
+    nb repo add [ref]
+    nb repo add data [ref] [key] [value]
+    nb repo get [ref]
+
+### Adding/deleting/updating hexagons on map
+    nb map add [0,0,0] [ref]
+    nb map add data [0,0,0] [key [value]
+    nb map get [0,0,0]
+    nb map get data [0,0,0] [key]
+    nb map update [0,0,0] [ref]
+    nb map update data [key] [value]
+    nb map del [0,0,0]
+    
 ### Status hexagon network (storage server, meta data server, connected clients)
     nb status server
     nb status storage
     nb status clients
+
 ### Package content
     nb content pack [dir]
     nb content upload [pack]
