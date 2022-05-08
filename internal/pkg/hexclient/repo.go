@@ -141,6 +141,31 @@ var repoDelCmd = &cobra.Command{
 	},
 }
 
+var repoDelDataCmd = &cobra.Command{
+	Use:   "del [ref]",
+	Short: "delete hexagon data from repository with reference [ref] and [key] ",
+	Run: func(cmd *cobra.Command, args []string) {
+		serverAddr, _ := cmd.Flags().GetString("addr")
+		secure, _ := cmd.Flags().GetBool("secure")
+
+		client, err := NewClient(serverAddr, secure)
+		var hexIDData hexcli.HexIDData
+
+		if len(args) < 2 {
+			fmt.Printf("Not enough arguments\n")
+		}
+		hexIDData.HexID = args[0]
+		hexIDData.DataKey = args[1]
+
+		err = client.RepoDeleteHexagonInfoData(&hexIDData)
+
+		if err != nil {
+			fmt.Printf("Error deleting %s", err)
+			return
+		}
+	},
+}
+
 var repoGetCmd = &cobra.Command{
 	Use:   "get [ref]",
 	Short: "get hexagon info from repository with reference [ref] ",
@@ -151,9 +176,7 @@ var repoGetCmd = &cobra.Command{
 		client, err := NewClient(serverAddr, secure)
 		var infoList hexcli.HexIDList
 
-		for _, id := range args {
-			infoList.HexID = append(infoList.HexID, id)
-		}
+		infoList.HexID = append(infoList.HexID, args[0])
 
 		result, err := client.RepoGetHexagonInfo(&infoList)
 
@@ -165,9 +188,36 @@ var repoGetCmd = &cobra.Command{
 		for _, hex := range result.HexInfo {
 			fmt.Printf("%s \n", hex.ID)
 			for key, value := range hex.Data {
-				fmt.Printf("\t%s: %s\n", key, value)
+				fmt.Printf("    %s %s\n", key, value)
 			}
 		}
+	},
+}
+
+var repoGetDataCmd = &cobra.Command{
+	Use:   "data [ref] [key]",
+	Short: "get hexagon data value from repository with reference [ref] and [key] ",
+	Run: func(cmd *cobra.Command, args []string) {
+		serverAddr, _ := cmd.Flags().GetString("addr")
+		secure, _ := cmd.Flags().GetBool("secure")
+
+		client, err := NewClient(serverAddr, secure)
+		var hexIDData hexcli.HexIDData
+
+		if len(args) < 2 {
+			fmt.Printf("Not enough arguments\n")
+		}
+		hexIDData.HexID = args[0]
+		hexIDData.DataKey = args[1]
+
+		result, err := client.RepoAddHexagonInfoData(&hexIDData)
+
+		if err != nil {
+			fmt.Printf("Error connecting %s", err)
+			return
+		}
+
+		fmt.Printf("    %s %s %s\n", result.HexID, result.DataKey, result.Value)
 	},
 }
 

@@ -18,33 +18,63 @@ run-help-repo:
 run-help-map:
 	go run nb.go map -h
 
+#
+# Repository
+#
 run-repo-add:
 	go run nb.go repo add 1000-0000-0000-0000 --secure=$(SECURE) --addr=$(ADDRESS)
+
+run-repo-add-file:
+	go run nb.go repo add file hexagons.csv --secure=$(SECURE) --addr=$(ADDRESS)
 
 run-repo-add-data:
 	go run nb.go repo add data 1000-0000-0000-0000 biome swamp --secure=$(SECURE) --addr=$(ADDRESS)
 
+run-repo-add-data-file:
+	go run nb.go repo add data file hexagon_data.csv --secure=$(SECURE) --addr=$(ADDRESS)
+
 run-repo-get:
 	go run nb.go repo get 1000-0000-0000-0000 --secure=$(SECURE) --addr=$(ADDRESS)
 
-run-repo-add-file:
-	go run nb.go repo add -f hexagons.csv --secure=$(SECURE) --addr=$(ADDRESS)
+run-repo-get-data:
+	go run nb.go repo get data 1000-0000-0000-0000 biome --secure=$(SECURE) --addr=$(ADDRESS)
 
 run-repo-del:
 	go run nb.go repo del 1000-0000-0000-0000 --secure=$(SECURE) --addr=$(ADDRESS)
 
+run-repo-del-data:
+	go run nb.go repo del data 1000-0000-0000-0000 biome --secure=$(SECURE) --addr=$(ADDRESS)
+
+#
+# Map
+#
 run-map-add:
-	go run nb.go map add --secure=$(SECURE) --addr=$(ADDRESS) -- 0 -5 5 N 0000-0000-0000-0000
+	go run nb.go map add --secure=$(SECURE) --addr=$(ADDRESS) -- 0 -5 5 0000-0000-0000-0000
+
+run-map-add-data:
+	go run nb.go map add data --secure=$(SECURE) --addr=$(ADDRESS) -- 0 -5 5 0000-0000-0000-0000 animal cat
 
 run-map-get:
 	go run nb.go map get --radius=2 --secure=$(SECURE) --addr=$(ADDRESS) -- 0 0 0
 
-run-map-rm:
-	go run nb.go map rm --secure=$(SECURE) --addr=$(ADDRESS) -- 0 -5 5
+run-map-get-data:
+	go run nb.go map get data --radius=2 --secure=$(SECURE) --addr=$(ADDRESS) -- 0 0 0 cat
 
-run-hex-info:
-	go run nb.go hex info --secure=$(SECURE) --addr=$(ADDRESS) -- 0 0 0
+run-map-update:
+	go run nb.go map update --secure=$(SECURE) --addr=$(ADDRESS) -- 0 -5 5 0000-0000-0000-0001
 
+run-map-update-data:
+	go run nb.go map update data --secure=$(SECURE) --addr=$(ADDRESS) -- 0 -5 5 0000-0000-0000-0001 animal dog
+
+run-map-del:
+	go run nb.go map del --secure=$(SECURE) --addr=$(ADDRESS) -- 0 -5 5
+
+run-map-del-data:
+	go run nb.go map del data --secure=$(SECURE) --addr=$(ADDRESS) -- 0 -5 5 animal
+
+#
+# Status
+#
 run-status-server:
 	go run nb.go status server --secure=$(SECURE) --addr=$(ADDRESS)
 

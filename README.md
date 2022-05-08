@@ -9,8 +9,12 @@ Command line interface to manipulate game content
 
 ### Hexagon manipulation
     nb repo add [ref]
+    nb repo add file [file.csv]
     nb repo add data [ref] [key] [value]
+    nb repo add data file [file.csv]
     nb repo get [ref]
+    nb repo del [ref]
+    nb repo del data [ref] [key]
 
 ### Adding/deleting/updating hexagons on map
     nb map add [0,0,0] [ref]
@@ -18,8 +22,9 @@ Command line interface to manipulate game content
     nb map get [0,0,0]
     nb map get data [0,0,0] [key]
     nb map update [0,0,0] [ref]
-    nb map update data [key] [value]
+    nb map update data [0,0,0] [key] [value]
     nb map del [0,0,0]
+    nb map del data [0,0,0]
     
 ### Status hexagon network (storage server, meta data server, connected clients)
     nb status server

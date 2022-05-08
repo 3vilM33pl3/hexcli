@@ -23,28 +23,34 @@ func Execute() {
 
 func init() {
 
-	rootCmd.AddCommand(mapCmd)
-	mapCmd.AddCommand(mapAddCmd)
-	//mapAddCmd.AddCommand(mapAddData)
-	mapCmd.AddCommand(mapGetCmd)
-	mapCmd.AddCommand(mapRemoveCmd)
-
-	mapCmd.PersistentFlags().Int64P("radius", "r", 0, "radius of hexagon circle")
+	rootCmd.PersistentFlags().BoolP("secure", "s", true, "secure connection")
+	rootCmd.PersistentFlags().StringP("addr", "a", "localhost:8080", "server address")
 
 	rootCmd.AddCommand(repoCmd)
 	repoCmd.AddCommand(repoAddCmd)
 	repoAddCmd.AddCommand(repoAddFileCmd)
 	repoAddCmd.AddCommand(repoAddDataCmd)
-	repoCmd.AddCommand(repoDelCmd)
+	//repoAddDataCmd.AddCommand(repoAddDataFileCmd)
 	repoCmd.AddCommand(repoGetCmd)
-	repoGetCmd.AddCommand(repoGetAllCmd)
+	repoGetCmd.AddCommand(repoGetDataCmd)
+	repoCmd.AddCommand(repoDelCmd)
+	repoDelCmd.AddCommand(repoDelDataCmd)
+
+	rootCmd.AddCommand(mapCmd)
+	mapCmd.AddCommand(mapAddCmd)
+	//mapAddCmd.AddCommand(mapAddData)
+	mapCmd.AddCommand(mapGetCmd)
+	//mapGetCmd.AddCommand(mapGetDataCmd)
+	//mapCmd.AddCommand(mapUpdateCmd)
+	//mapUpdateCmd.AddCommand(mapUpdateData)
+	//mapCmd.AddCommand(mapDelCmd)
+	//mapDelCmd.AddCommand(mapDelDataCmd)
+
+	mapCmd.PersistentFlags().Int64P("radius", "r", 0, "radius of hexagon circle")
 
 	rootCmd.AddCommand(hexStatusCmd)
 	hexStatusCmd.AddCommand(hexStatusServerCmd)
 	hexStatusCmd.AddCommand(hexStatusStorageCmd)
 	hexStatusCmd.AddCommand(hexStatusClientCmd)
-
-	rootCmd.PersistentFlags().BoolP("secure", "s", true, "secure connection")
-	rootCmd.PersistentFlags().StringP("addr", "a", "localhost:8080", "server address")
 
 }
