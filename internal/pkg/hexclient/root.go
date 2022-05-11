@@ -5,6 +5,7 @@ Copyright © 2022 NAME HERE <EMAIL ADDRESS>
 package hexclient
 
 import (
+	"flag"
 	"github.com/spf13/cobra"
 	"os"
 )
@@ -22,6 +23,8 @@ func Execute() {
 }
 
 func init() {
+	flag.Parse()
+	flag.Lookup("logtostderr").Value.Set("true")
 
 	rootCmd.PersistentFlags().BoolP("secure", "s", true, "secure connection")
 	rootCmd.PersistentFlags().StringP("addr", "a", "localhost:8080", "server address")
@@ -38,7 +41,7 @@ func init() {
 
 	rootCmd.AddCommand(mapCmd)
 	mapCmd.AddCommand(mapAddCmd)
-	//mapAddCmd.AddCommand(mapAddData)
+	mapAddCmd.AddCommand(mapAddData)
 	mapCmd.AddCommand(mapGetCmd)
 	//mapGetCmd.AddCommand(mapGetDataCmd)
 	//mapCmd.AddCommand(mapUpdateCmd)

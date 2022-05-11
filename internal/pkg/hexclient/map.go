@@ -3,6 +3,7 @@ package hexclient
 import (
 	"fmt"
 	"github.com/3vilm33pl3/hexcli/internal/pkg/hexcli"
+	"github.com/golang/glog"
 	"github.com/spf13/cobra"
 	"strconv"
 )
@@ -53,6 +54,34 @@ var mapAddCmd = &cobra.Command{
 		if err != nil {
 			fmt.Printf("Error placing hexagon on map: %s", err)
 			return
+		}
+
+	},
+}
+
+var mapAddData = &cobra.Command{
+	Use:   "data [0,0,0] [key] [value]",
+	Short: "add data to map",
+	Run: func(cmd *cobra.Command, args []string) {
+		serverAddr, _ := cmd.Flags().GetString("addr")
+		secure, _ := cmd.Flags().GetBool("secure")
+
+		client, err := NewClient(serverAddr, secure)
+
+		x, y, z, _, err := extractHexCoord(args)
+
+		hexLocData := hexcli.HexLocData{
+			X:       x,
+			Y:       y,
+			Z:       z,
+			DataKey: args[3],
+			Value:   args[4],
+		}
+
+		err = client.MapAddData(&hexLocData)
+
+		if err != nil {
+			glog.Errorf("%s\n", err)
 		}
 
 	},

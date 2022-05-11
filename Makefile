@@ -52,7 +52,7 @@ run-map-add:
 	go run nb.go map add --secure=$(SECURE) --addr=$(ADDRESS) -- 0 -5 5 0000-0000-0000-0000
 
 run-map-add-data:
-	go run nb.go map add data --secure=$(SECURE) --addr=$(ADDRESS) -- 0 -5 5 0000-0000-0000-0000 animal cat
+	go run nb.go map add data --secure=$(SECURE) --addr=$(ADDRESS) -- 0 -5 5 animal cat
 
 run-map-get:
 	go run nb.go map get --radius=2 --secure=$(SECURE) --addr=$(ADDRESS) -- 0 0 0
