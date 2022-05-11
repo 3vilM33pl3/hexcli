@@ -34,7 +34,7 @@ var mapAddCmd = &cobra.Command{
 			fmt.Printf("Not enough arguments")
 			return
 		}
-		x, y, z, id, err := extractHexCoord(args)
+		x, y, z, err := extractHexCoord(args)
 		if err != nil {
 			return
 		}
@@ -43,7 +43,7 @@ var mapAddCmd = &cobra.Command{
 			X:     x,
 			Y:     y,
 			Z:     z,
-			HexID: id,
+			HexID: args[3],
 		}
 
 		hexLocList := &hexcli.HexLocationList{}
@@ -68,7 +68,7 @@ var mapAddData = &cobra.Command{
 
 		client, err := NewClient(serverAddr, secure)
 
-		x, y, z, _, err := extractHexCoord(args)
+		x, y, z, err := extractHexCoord(args)
 
 		hexLocData := hexcli.HexLocData{
 			X:       x,
@@ -97,7 +97,7 @@ var mapGetCmd = &cobra.Command{
 
 		client, err := NewClient(serverAddr, secure)
 
-		x, y, z, _, err := extractHexCoord(args)
+		x, y, z, err := extractHexCoord(args)
 		if err != nil {
 			return
 		}
@@ -115,6 +115,9 @@ var mapGetCmd = &cobra.Command{
 
 		for _, hex := range result.HexLoc {
 			fmt.Printf("%d %d %d %s\n", hex.X, hex.Y, hex.Z, hex.HexID)
+			for key, value := range hex.Data {
+				fmt.Printf("'%s' - '%s'\n", key, value)
+			}
 		}
 
 	},
@@ -130,7 +133,7 @@ var mapRemoveCmd = &cobra.Command{
 		client, err := NewClient(serverAddr, secure)
 		var hexList hexcli.HexLocationList
 
-		x, y, z, _, err := extractHexCoord(args)
+		x, y, z, err := extractHexCoord(args)
 		if err != nil {
 			return
 		}
@@ -148,25 +151,25 @@ var mapRemoveCmd = &cobra.Command{
 	},
 }
 
-func extractHexCoord(args []string) (x int64, y int64, z int64, id string, err error) {
+func extractHexCoord(args []string) (x int64, y int64, z int64, err error) {
 
 	x, err = strconv.ParseInt(args[0], 10, 64)
 	if err != nil {
 		fmt.Printf("x value is not a number %s : %e", args[0], err)
-		return x, y, z, "", err
+		return x, y, z, err
 	}
 
 	y, err = strconv.ParseInt(args[1], 10, 64)
 	if err != nil {
 		fmt.Printf("y value is not a number %s : %e", args[1], err)
-		return x, y, z, "", err
+		return x, y, z, err
 	}
 
 	z, err = strconv.ParseInt(args[2], 10, 64)
 	if err != nil {
 		fmt.Printf("z value is not a number %s : %e", args[2], err)
-		return x, y, z, "", err
+		return x, y, z, err
 	}
 
-	return x, y, z, args[3], nil
+	return x, y, z, nil
 }
