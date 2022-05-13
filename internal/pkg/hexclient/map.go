@@ -124,7 +124,7 @@ var mapGetCmd = &cobra.Command{
 }
 
 var mapRemoveCmd = &cobra.Command{
-	Use:   "rm",
+	Use:   "remove",
 	Short: "remove hexagon at `coord` [x,y,z]",
 	Run: func(cmd *cobra.Command, args []string) {
 		serverAddr, _ := cmd.Flags().GetString("addr")
@@ -147,6 +147,104 @@ var mapRemoveCmd = &cobra.Command{
 
 		hexList.HexLoc = append(hexList.HexLoc, hex)
 		err = client.MapRemove(&hexList)
+
+	},
+}
+
+var mapRemoveDataCmd = &cobra.Command{
+	Use:   "data",
+	Short: "remove hexagon data at `coord` [x,y,z] and [key]",
+	Run: func(cmd *cobra.Command, args []string) {
+		if len(args) < 3 {
+			fmt.Println("Not enough arguments")
+			return
+		}
+
+		serverAddr, _ := cmd.Flags().GetString("addr")
+		secure, _ := cmd.Flags().GetBool("secure")
+
+		client, err := NewClient(serverAddr, secure)
+
+		x, y, z, err := extractHexCoord(args)
+		if err != nil {
+			return
+		}
+
+		data := make(map[string]string)
+		data[args[3]] = ""
+		hex := &hexcli.HexLocation{
+			X:     x,
+			Y:     y,
+			Z:     z,
+			HexID: "",
+			Data:  data,
+		}
+
+		err = client.MapRemoveData(hex)
+
+	},
+}
+
+var mapUpdateCmd = &cobra.Command{
+	Use:   "update",
+	Short: "update hexagon from map at `coord` [x,y,z]",
+	Run: func(cmd *cobra.Command, args []string) {
+		serverAddr, _ := cmd.Flags().GetString("addr")
+		secure, _ := cmd.Flags().GetBool("secure")
+
+		client, err := NewClient(serverAddr, secure)
+		var hexList hexcli.HexLocationList
+
+		x, y, z, err := extractHexCoord(args)
+		if err != nil {
+			return
+		}
+
+		hex := &hexcli.HexLocation{
+			X:     x,
+			Y:     y,
+			Z:     z,
+			HexID: "",
+		}
+
+		hexList.HexLoc = append(hexList.HexLoc, hex)
+		_, err = client.MapUpdate(hex)
+
+	},
+}
+
+var mapUpdateDataCmd = &cobra.Command{
+	Use:   "data",
+	Short: "update hexagon from map at `coord` [x,y,z]",
+	Run: func(cmd *cobra.Command, args []string) {
+		if len(args) < 4 {
+			fmt.Println("Not enough arguments")
+			return
+		}
+
+		serverAddr, _ := cmd.Flags().GetString("addr")
+		secure, _ := cmd.Flags().GetBool("secure")
+
+		client, err := NewClient(serverAddr, secure)
+		var hexList hexcli.HexLocationList
+
+		x, y, z, err := extractHexCoord(args)
+		if err != nil {
+			return
+		}
+
+		data := make(map[string]string)
+		data[args[3]] = args[4]
+		hex := &hexcli.HexLocation{
+			X:     x,
+			Y:     y,
+			Z:     z,
+			HexID: "",
+			Data:  data,
+		}
+
+		hexList.HexLoc = append(hexList.HexLoc, hex)
+		_, err = client.MapUpdate(hex)
 
 	},
 }

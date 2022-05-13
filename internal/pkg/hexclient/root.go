@@ -43,11 +43,10 @@ func init() {
 	mapCmd.AddCommand(mapAddCmd)
 	mapAddCmd.AddCommand(mapAddData)
 	mapCmd.AddCommand(mapGetCmd)
-	//mapGetCmd.AddCommand(mapGetDataCmd)
-	//mapCmd.AddCommand(mapUpdateCmd)
-	//mapUpdateCmd.AddCommand(mapUpdateData)
-	//mapCmd.AddCommand(mapDelCmd)
-	//mapDelCmd.AddCommand(mapDelDataCmd)
+	mapCmd.AddCommand(mapUpdateCmd)
+	mapUpdateCmd.AddCommand(mapUpdateDataCmd)
+	mapCmd.AddCommand(mapRemoveCmd)
+	mapRemoveCmd.AddCommand(mapRemoveDataCmd)
 
 	mapCmd.PersistentFlags().Int64P("radius", "r", 0, "radius of hexagon circle")
 

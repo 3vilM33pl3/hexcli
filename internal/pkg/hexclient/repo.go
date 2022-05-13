@@ -142,7 +142,7 @@ var repoDelCmd = &cobra.Command{
 }
 
 var repoDelDataCmd = &cobra.Command{
-	Use:   "del [ref]",
+	Use:   "data [ref]",
 	Short: "delete hexagon data from repository with reference [ref] and [key] ",
 	Run: func(cmd *cobra.Command, args []string) {
 		serverAddr, _ := cmd.Flags().GetString("addr")

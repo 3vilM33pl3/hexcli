@@ -57,20 +57,17 @@ run-map-add-data:
 run-map-get:
 	go run nb.go map get --radius=2 --secure=$(SECURE) --addr=$(ADDRESS) -- 0 0 0
 
-run-map-get-data:
-	go run nb.go map get data --radius=2 --secure=$(SECURE) --addr=$(ADDRESS) -- 0 0 0 cat
-
 run-map-update:
-	go run nb.go map update --secure=$(SECURE) --addr=$(ADDRESS) -- 0 -5 5 0000-0000-0000-0001
+	go run nb.go map update --secure=$(SECURE) --addr=$(ADDRESS) -- 0 -5 5 0000-0000-0000-0003
 
 run-map-update-data:
-	go run nb.go map update data --secure=$(SECURE) --addr=$(ADDRESS) -- 0 -5 5 0000-0000-0000-0001 animal dog
+	go run nb.go map update data --secure=$(SECURE) --addr=$(ADDRESS) -- 0 -5 5 animal dog
 
-run-map-del:
-	go run nb.go map del --secure=$(SECURE) --addr=$(ADDRESS) -- 0 -5 5
+run-map-remove:
+	go run nb.go map remove --secure=$(SECURE) --addr=$(ADDRESS) -- 0 -5 5
 
-run-map-del-data:
-	go run nb.go map del data --secure=$(SECURE) --addr=$(ADDRESS) -- 0 -5 5 animal
+run-map-remove-data:
+	go run nb.go map remove data --secure=$(SECURE) --addr=$(ADDRESS) -- 0 -5 5 animal
 
 #
 # Status
