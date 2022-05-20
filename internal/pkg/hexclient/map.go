@@ -114,8 +114,14 @@ var mapGetCmd = &cobra.Command{
 		}
 
 		for _, hex := range result.HexLoc {
+			fmt.Println("--Coordinates & ID--")
 			fmt.Printf("%d %d %d %s\n", hex.X, hex.Y, hex.Z, hex.HexID)
-			for key, value := range hex.Data {
+			fmt.Println("--global--")
+			for key, value := range hex.GlobalData {
+				fmt.Printf("'%s' - '%s'\n", key, value)
+			}
+			fmt.Println("--local--")
+			for key, value := range hex.LocalData {
 				fmt.Printf("'%s' - '%s'\n", key, value)
 			}
 		}
@@ -173,11 +179,11 @@ var mapRemoveDataCmd = &cobra.Command{
 		data := make(map[string]string)
 		data[args[3]] = ""
 		hex := &hexcli.HexLocation{
-			X:     x,
-			Y:     y,
-			Z:     z,
-			HexID: "",
-			Data:  data,
+			X:         x,
+			Y:         y,
+			Z:         z,
+			HexID:     "",
+			LocalData: data,
 		}
 
 		err = client.MapRemoveData(hex)
@@ -236,11 +242,11 @@ var mapUpdateDataCmd = &cobra.Command{
 		data := make(map[string]string)
 		data[args[3]] = args[4]
 		hex := &hexcli.HexLocation{
-			X:     x,
-			Y:     y,
-			Z:     z,
-			HexID: "",
-			Data:  data,
+			X:         x,
+			Y:         y,
+			Z:         z,
+			HexID:     "",
+			LocalData: data,
 		}
 
 		hexList.HexLoc = append(hexList.HexLoc, hex)
